@@ -89,48 +89,63 @@ static NSString *const kTaskCellReuseIdentifier = @"TSKTaskViewController.TaskCe
 
 - (void)initializeWorkflow
 {
-    self.workflow = [[TSKWorkflow alloc] initWithName:@"Order Product Workflow"];
+    self.workflow = [[TSKWorkflow alloc] initWithName:@"Example Workflow"];
     self.workflow.delegate = self;
 
-    // This task is completely independent of other tasks. Imagine that this creates a server resource that
-    // we are going to update with additional data
-    TimeSlicedTask *createProjectTask = [[TimeSlicedTask alloc] initWithName:@"Create Project" timeRequired:2.0];
-    createProjectTask.probabilityOfFailure = 0.1;
-    [self.workflow addTask:createProjectTask prerequisites:nil];
+    TSKTask *a = [[TSKTask alloc] initWithName:@"Task A"];
+    [self.workflow addTask:a prerequisiteTasks:nil];
 
-    // This is an external condition task that indicates that a photo is available. Imagine that this is
-    // fulfilled when the user takes a photo or chooses a photo from their library for this project.
-    TSKTask *photo1AvailableCondition = [[TSKExternalConditionTask alloc] initWithName:@"Photo 1 Available"];
-    [self.workflow addTask:photo1AvailableCondition prerequisites:nil];
+    TSKTask *b = [[TSKTask alloc] initWithName:@"Task B"];
+    [self.workflow addTask:b prerequisiteTasks:nil];
 
-    // This uploads the first photo. It can’t run until the project is created and the photo is available
-    TimeSlicedTask *uploadPhoto1Task = [[TimeSlicedTask alloc] initWithName:@"Upload Photo 1" timeRequired:5.0];
-    uploadPhoto1Task.probabilityOfFailure = 0.15;
-    [self.workflow addTask:uploadPhoto1Task prerequisites:createProjectTask, photo1AvailableCondition, nil];
-
-    // These are analagous to the previous two tasks, but for a second photo
-    TSKTask *photo2AvailableCondition = [[TSKExternalConditionTask alloc] initWithName:@"Photo 2 Available"];
-    TimeSlicedTask *uploadPhoto2Task = [[TimeSlicedTask alloc] initWithName:@"Upload Photo 2" timeRequired:6.0];
-    uploadPhoto1Task.probabilityOfFailure = 0.15;
-
-    [self.workflow addTask:photo2AvailableCondition prerequisites:nil];
-    [self.workflow addTask:uploadPhoto2Task prerequisites:createProjectTask, photo2AvailableCondition, nil];
-
-    // This is an external condition task that indicates that some metadata has been entered. Imagine that
-    // once the two photos are uploaded, the user is asked to name the project.
-    TSKTask *metadataAvailableCondition = [[TSKExternalConditionTask alloc] initWithName:@"Metadata Available"];
-    [self.workflow addTask:metadataAvailableCondition prerequisites:nil];
-
-    // This submits an order. It can’t run until the photos are uploaded and the metadata is provided.
-    TimeSlicedTask *submitOrderTask = [[TimeSlicedTask alloc] initWithName:@"Submit Order" timeRequired:2.0];
-    submitOrderTask.probabilityOfFailure = 0.1;
-    [self.workflow addTask:submitOrderTask prerequisites:uploadPhoto1Task, uploadPhoto2Task, metadataAvailableCondition, nil];
-
-    self.tasks = @[ createProjectTask,
-                    photo1AvailableCondition, uploadPhoto1Task,
-                    photo2AvailableCondition, uploadPhoto2Task,
-                    metadataAvailableCondition, submitOrderTask ];
+    self.tasks = @[ a, b ];
 }
+
+
+//- (void)initializeWorkflow
+//{
+//    self.workflow = [[TSKWorkflow alloc] initWithName:@"Order Product Workflow"];
+//    self.workflow.delegate = self;
+//
+//    // This task is completely independent of other tasks. Imagine that this creates a server resource that
+//    // we are going to update with additional data
+//    TimeSlicedTask *createProjectTask = [[TimeSlicedTask alloc] initWithName:@"Create Project" timeRequired:2.0];
+//    createProjectTask.probabilityOfFailure = 0.1;
+//    [self.workflow addTask:createProjectTask prerequisites:nil];
+//
+//    // This is an external condition task that indicates that a photo is available. Imagine that this is
+//    // fulfilled when the user takes a photo or chooses a photo from their library for this project.
+//    TSKTask *photo1AvailableCondition = [[TSKExternalConditionTask alloc] initWithName:@"Photo 1 Available"];
+//    [self.workflow addTask:photo1AvailableCondition prerequisites:nil];
+//
+//    // This uploads the first photo. It can’t run until the project is created and the photo is available
+//    TimeSlicedTask *uploadPhoto1Task = [[TimeSlicedTask alloc] initWithName:@"Upload Photo 1" timeRequired:5.0];
+//    uploadPhoto1Task.probabilityOfFailure = 0.15;
+//    [self.workflow addTask:uploadPhoto1Task prerequisites:createProjectTask, photo1AvailableCondition, nil];
+//
+//    // These are analagous to the previous two tasks, but for a second photo
+//    TSKTask *photo2AvailableCondition = [[TSKExternalConditionTask alloc] initWithName:@"Photo 2 Available"];
+//    TimeSlicedTask *uploadPhoto2Task = [[TimeSlicedTask alloc] initWithName:@"Upload Photo 2" timeRequired:6.0];
+//    uploadPhoto1Task.probabilityOfFailure = 0.15;
+//
+//    [self.workflow addTask:photo2AvailableCondition prerequisites:nil];
+//    [self.workflow addTask:uploadPhoto2Task prerequisites:createProjectTask, photo2AvailableCondition, nil];
+//
+//    // This is an external condition task that indicates that some metadata has been entered. Imagine that
+//    // once the two photos are uploaded, the user is asked to name the project.
+//    TSKTask *metadataAvailableCondition = [[TSKExternalConditionTask alloc] initWithName:@"Metadata Available"];
+//    [self.workflow addTask:metadataAvailableCondition prerequisites:nil];
+//
+//    // This submits an order. It can’t run until the photos are uploaded and the metadata is provided.
+//    TimeSlicedTask *submitOrderTask = [[TimeSlicedTask alloc] initWithName:@"Submit Order" timeRequired:2.0];
+//    submitOrderTask.probabilityOfFailure = 0.1;
+//    [self.workflow addTask:submitOrderTask prerequisites:uploadPhoto1Task, uploadPhoto2Task, metadataAvailableCondition, nil];
+//
+//    self.tasks = @[ createProjectTask,
+//                    photo1AvailableCondition, uploadPhoto1Task,
+//                    photo2AvailableCondition, uploadPhoto2Task,
+//                    metadataAvailableCondition, submitOrderTask ];
+//}
 
 
 - (void)dealloc
